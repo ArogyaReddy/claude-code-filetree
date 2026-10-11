@@ -2,7 +2,7 @@ import { expect, test } from 'claude-code/testing'
 
 import { TONES } from '../hooks/git'
 import { GIT_COLOR } from '../hooks/icons'
-import { DEFAULT_THEME } from '../hooks/tree'
+import { DEFAULT_THEME, faint } from '../hooks/tree'
 
 const BASE = '#1d2021'
 const FG = '#ebdbb2'
@@ -56,4 +56,11 @@ test('the default theme is Gruvbox, leaves fg and bg to the terminal, and its te
   for (const text of [DEFAULT_THEME.accent, DEFAULT_THEME.muted, DEFAULT_THEME.urgent]) {
     expect({ text, ok: contrast(text, BASE) >= 3 }).toEqual({ text, ok: true })
   }
+})
+
+test('the hover highlight stays visible against the background and subtler than the selection', () => {
+  const hover = faint(DEFAULT_THEME.selection)
+
+  expect(contrast(hover, BASE)).toBeGreaterThanOrEqual(1.2)
+  expect(contrast(hover, BASE)).toBeLessThan(contrast(DEFAULT_THEME.selection, BASE))
 })

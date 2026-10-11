@@ -11,6 +11,7 @@ import {
   DEFAULT_THEME,
   dirname,
   emptyTree,
+  faint,
   formatSize,
   inside,
   isAbsolute,
@@ -124,12 +125,6 @@ async function cwdOf($: EngineInterface): Promise<string> {
 function clean(segs: Seg[]): Seg[] {
   for (const seg of segs) for (const k of Object.keys(seg) as (keyof Seg)[]) if (seg[k] === undefined) delete seg[k]
   return segs
-}
-
-function faint(hex: string): string {
-  const v = parseInt(hex.slice(1), 16)
-  const ch = (shift: number) => Math.round(0x26 + (((v >> shift) & 255) - 0x26) * 0.3)
-  return `#${[16, 8, 0].map(x => ch(x).toString(16).padStart(2, '0')).join('')}`
 }
 
 async function get($: EngineInterface): Promise<FileTree> {

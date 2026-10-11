@@ -15,6 +15,13 @@ export const DEFAULT_THEME: Theme = {
   bg: '',
 }
 
+/** The hover highlight: the selection pulled halfway toward a dark neutral, so it reads as a step below the selected row. */
+export function faint(hex: string): string {
+  const v = parseInt(hex.slice(1), 16)
+  const ch = (shift: number) => Math.round(0x26 + (((v >> shift) & 255) - 0x26) * 0.5)
+  return `#${[16, 8, 0].map(x => ch(x).toString(16).padStart(2, '0')).join('')}`
+}
+
 export function emptyTree(root: string): FileTree {
   return {
     root,
