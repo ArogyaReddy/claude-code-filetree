@@ -12,7 +12,7 @@ export const DEFAULT_THEME: Theme = {
   muted: '#928374',
   urgent: '#fb4934',
   selection: '#3c3836',
-  bg: '',
+  bg: '#1d2021',
 }
 
 /** The hover highlight: the selection pulled halfway toward a dark neutral, so it reads as a step below the selected row. */

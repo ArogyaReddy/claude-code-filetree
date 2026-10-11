@@ -48,8 +48,8 @@ test('git status colours read at least 3:1 on the background and on a selected r
   }
 })
 
-test('the default theme is Gruvbox, leaves fg and bg to the terminal, and its text reads on a selected row', () => {
-  expect(DEFAULT_THEME).toEqual({ fg: '', accent: '#83a598', muted: '#928374', urgent: '#fb4934', selection: '#3c3836', bg: '' })
+test('the default theme is Gruvbox with its own background, leaves fg to the terminal, and its text reads on a selected row', () => {
+  expect(DEFAULT_THEME).toEqual({ fg: '', accent: '#83a598', muted: '#928374', urgent: '#fb4934', selection: '#3c3836', bg: BASE })
   for (const text of [FG, DEFAULT_THEME.accent, DEFAULT_THEME.muted, DEFAULT_THEME.urgent]) {
     expect({ text, ok: contrast(text, DEFAULT_THEME.selection) >= 3 }).toEqual({ text, ok: true })
   }
