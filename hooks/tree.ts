@@ -8,10 +8,10 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 
 export const DEFAULT_THEME: Theme = {
   fg: '',
-  accent: '#5b9bd5',
-  muted: '#808a96',
-  urgent: '#d0605e',
-  selection: '#6b7280',
+  accent: '#83a598',
+  muted: '#928374',
+  urgent: '#fb4934',
+  selection: '#3c3836',
   bg: '',
 }
 

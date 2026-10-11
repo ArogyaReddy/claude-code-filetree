@@ -46,8 +46,8 @@ const FIND_LIMIT = 200
 const READ_REVEAL_LIMIT = 12
 const SEARCH_REVEAL_LIMIT = 60
 const ACTIVITY_TTL_MS = 45_000
-const ADD_COLOR = '#98c379'
-const DEL_COLOR = '#e06c75'
+const ADD_COLOR = '#b8bb26'
+const DEL_COLOR = '#fb4934'
 const THEME_FILE = '.local/state/omarchy/current/theme/colors.toml'
 const THEME_POLL_MS = 2000
 const FONT_SCRIPT =
@@ -1326,7 +1326,7 @@ export const register: Register = (on, options) => {
       if (!c) return []
       const out: Seg[] = []
       if (c[0] > 0) out.push({ t: ` ?:${c[0]}`, c: GIT_COLOR['?'] ?? ADD_COLOR })
-      if (c[1] > 0) out.push({ t: ` M:${c[1]}`, c: GIT_COLOR.M ?? '#e5c07b' })
+      if (c[1] > 0) out.push({ t: ` M:${c[1]}`, c: GIT_COLOR.M ?? '#fabd2f' })
       if (c[2] > 0) out.push({ t: ` D:${c[2]}`, c: theme.urgent })
       return out
     }
