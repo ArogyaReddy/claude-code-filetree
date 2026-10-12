@@ -345,6 +345,23 @@ test('desktop: a long tree draws every row and leaves the wheel to the app', { t
   await ui.unmount()
 })
 
+test('desktop: a very large open tree is cut with a note so the drawn tree stays within the engine bounds', { timeoutMs: 30_000 }, async ($, on) => {
+  const root = '/Users/k/huge'
+  const names = Array.from({ length: 5000 }, (_, i) => [`file-number-${String(i).padStart(5, '0')}.txt`, 'file'] as [string, 'file'])
+  const clock = world(on, { os: 'darwin', env: { HOME: '/Users/k', TMPDIR: '/var/folders/x/T/' }, cwd: root, top: '', dirs: { [root]: names }, status: '', numstat: '' }, [])
+  await $.session.start({ cwd: root, surface: 'desktop', isInteractive: true })
+  await clock.settle()
+  const ui = await $.ui.mount({ plugin: 'filetree', surface: 'desktop', component: 'Pane', requestId: 'filetree', props: { ...paneProps(60), scroll: { offset: 0, bodyRows: 20 } } })
+  await clock.settle()
+  const client = ((await ui.drawn()) as any).children.find((c: any) => c.type === 'Client')
+  const rows = client.props.props.rows as any[]
+  expect(JSON.stringify(client.props.props).length).toBeLessThan(100_000)
+  expect(rows.length).toBeLessThan(5000)
+  expect(rows.at(-1).id).toBe('')
+  expect(rows.at(-1).left[0].t).toContain('more rows')
+  await ui.unmount()
+})
+
 async function scrolledTree($: any, on: any) {
   const root = '/home/k/big'
   const files = Array.from({ length: 60 }, (_, i) => [`f${String(i).padStart(2, '0')}.txt`, 'file'] as [string, 'file'])
@@ -739,6 +756,36 @@ test('a cwd change moves the tree and drops the old selection before the next pr
   await clock.settle()
   expect(await texts(ui)).toContain('c.txt')
   await ui.unmount()
+})
+
+test('open at start off: no pane at start, on a cwd change or a prompt, until /filetree opens it', { timeoutMs: 20_000, options: { start: 'off' } }, async ($, on) => {
+  const ran: Ran = []
+  const a = '/home/k/repo-a'
+  const b = '/home/k/repo-b'
+  const c = '/home/k/repo-c'
+  const w: World = { os: 'linux', env: { HOME: '/home/k' }, cwd: a, top: '', dirs: { [a]: [['a.txt', 'file']], [b]: [['b.txt', 'file']], [c]: [['c.txt', 'file']] }, status: '', numstat: '' }
+  const clock = world(on, w, ran)
+  on('classic.CwdChanged', () => ({}))
+  const before = opens.length
+  await $.session.start({ cwd: a, surface: 'terminal', isInteractive: true })
+  await clock.settle()
+  w.cwd = b
+  await $.prompt.submit({ text: 'look at @b.txt', wait: false } as any)
+  await clock.settle()
+  w.cwd = c
+  await $.classic.CwdChanged({ old_cwd: b, new_cwd: c } as any)
+  await clock.settle()
+  await $.session.start({ cwd: c, surface: 'terminal', isInteractive: true })
+  await clock.settle()
+  expect(opens.length).toBe(before)
+  await $.command.run(fullscreen(''))
+  await clock.settle()
+  expect(opens.slice(before)).toContainEqual(expect.objectContaining({ id: 'filetree', focus: true }))
+  const shown = opens.length
+  w.cwd = a
+  await $.classic.CwdChanged({ old_cwd: c, new_cwd: a } as any)
+  await clock.settle()
+  expect(opens.length).toBeGreaterThan(shown)
 })
 
 test('a background git push stays running until its task notification arrives', { timeoutMs: 20_000 }, async ($, on) => {
